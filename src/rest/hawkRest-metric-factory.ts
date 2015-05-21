@@ -43,35 +43,32 @@ module hawkularRest {
       this.setPort(this.port || $location.port() || 8080);
 
       var prefix = 'http://' + this.host + ':' + this.port;
-      var metricUrlPart = '/hawkular-metrics';
+      var metricUrlPart = '/hawkular/metrics';
       var url = prefix + metricUrlPart;
       var factory: any = {};
 
       factory.Tenant = $resource(url + '/tenants', {});
 
-      factory.Metric = $resource(url + '/:tenantId/metrics', {
-        tenantId : '@tenantId'
-      }, {
-        queryNum: {
+      factory.Metric = $resource(url + '/metrics', { }, {
+        queryGauge: {
           method: 'GET',
           isArray: true,
-          params: { type: 'num' }
+          params: { type: 'gauge' }
         },
         queryAvail: {
           method: 'GET',
           isArray: true,
-          params: { type: 'avail' }
+          params: { type: 'availability' }
         }
       });
 
-      factory.NumericMetric = $resource(url + '/:tenantId/metrics/numeric', {
+      factory.Gauge = $resource(url + '/gauges?tenantId=:tenantId', {
         tenantId : '@tenantId'
       });
 
-
-      factory.NumericMetricData = $resource(url + '/:tenantId/metrics/numeric/:numericId/data', {
+      factory.GaugeData = $resource(url + '/gauges/:gaugeId/data?tenantId=:tenantId', {
         tenantId: '@tenantId',
-        numericId: '@numericId'
+        gaugeId: '@gaugeId'
       }, {
         queryMetrics: {
           method: 'GET',
@@ -84,21 +81,22 @@ module hawkularRest {
         }
       });
 
-      factory.NumericMetricMultiple = $resource(url + '/:tenantId/metrics/numeric/data', {
+      factory.GaugeDataMultiple = $resource(url + '/gauges/data?tenantId=:tenantId', {
         tenantId : '@tenantId',
-        numericId : '@numericId'
+        gaugeId: '@gaugeId'
       });
 
-      factory.AvailabilityMetric = $resource(url + '/:tenantId/metrics/availability', {
-        tenantId : '@tenantId'
-      });
-
-      factory.AvailabilityMetricData = $resource(url + '/:tenantId/metrics/availability/:availabilityId/data', {
+      factory.Availability = $resource(url + '/availability?tenantId=:tenantId', {
         tenantId : '@tenantId',
-        availabilityId : '@availabilityId'
+        gaugeId: '@gaugeId'
       });
 
-      factory.AvailabilityMetricMultiple = $resource(url + '/:tenantId/metrics/availability/data', {
+      factory.AvailabilityData = $resource(url + '/availability/:availabilityId/data?tenantId=:tenantId', {
+        tenantId : '@tenantId',
+        availabilityId: '@availabilityId'
+      });
+
+      factory.AvailabilityDataMultiple = $resource(url + '/availability/data?tenantId=:tenantId', {
         tenantId : '@tenantId'
       });
 
